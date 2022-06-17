@@ -6,11 +6,11 @@ namespace Eleaning_Web.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string AnswerId { get; set; }
-        public string Content { get; set; }
+        public string? AnswerId { get; set; }
+        public string? Content { get; set; }
         public bool RightWrong { get; set; }
 
         public int IdExam { get; set; }
-        public Exam exam { get; set; }
+        public Exam? exam { get; set; }
     }
 }

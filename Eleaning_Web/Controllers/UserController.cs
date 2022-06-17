@@ -15,13 +15,13 @@ namespace Eleaning_Web.Controllers
         {
             _user = user;
         }
-        [HttpGet("get-all-user")]
+        [HttpGet("GetAllUser")]
         public ActionResult<IEnumerable<User>> GetUsers()
         {
             var users = _user.GetAllUser();
             return Ok(users);
         }
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public IActionResult Register(UserRequest request)
         {
             _user.Register(request);

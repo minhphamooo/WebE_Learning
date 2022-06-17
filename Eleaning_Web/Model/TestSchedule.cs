@@ -9,6 +9,6 @@ namespace Eleaning_Web.Model
         public int TestScheduleId { get; set; }
         public DateTime DayExam { get; set; }
         public DateTime Time { get; set; }
-        public List<Exam> Exam { get; set; }
+        public List<Exam>? Exams { get; set; }
     }
 }

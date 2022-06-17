@@ -10,6 +10,6 @@ namespace Eleaning_Web.Model
         public DateTime Time { get; set; }
         public DateTime DayLearn { get; set; }
         public int IdSubject { get; set; }
-        public Subject subject { get; set; }
+        public Subject? subject { get; set; }
     }
 }

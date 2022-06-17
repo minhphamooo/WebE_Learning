@@ -6,12 +6,12 @@ namespace Eleaning_Web.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string ResultId { get; set; }
+        public string? ResultId { get; set; }
         public float Score { get; set; }
         public DateTime DayExam { get; set; }
         public int IdExam { get; set; }
-        public Exam exam { get; set; }
+        public Exam? exam { get; set; }
         public int IdUser { get; set; }
-        public User user { get; set; }
+        public User? user { get; set; }
     }
 }

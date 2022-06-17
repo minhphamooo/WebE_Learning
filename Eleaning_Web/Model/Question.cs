@@ -6,9 +6,9 @@ namespace Eleaning_Web.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string QuestionId { get; set; }
-        public string Form { get; set; }
+        public string? QuestionId { get; set; }
+        public string? Form { get; set; }
         public int IdSubject { get; set; }
-        public Subject subject { get; set; }
+        public Subject? subject { get; set; }
     }
 }

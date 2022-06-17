@@ -10,8 +10,8 @@ namespace Eleaning_Web.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DocumentId { get; set; }
         public int NameDocument { get; set; }
-        public string Link { get; set; }
+        public string? Link { get; set; }
         public int IdSubject { get; set; }
-        public Subject subject { get; set; }
+        public Subject? subject { get; set; }
     }
 }
