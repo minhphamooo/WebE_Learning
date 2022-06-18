@@ -4,8 +4,6 @@ using Eleaning_Web.Interface;
 using Eleaning_Web.Model;
 using AutoMapper;
 using Eleaning_Web.Repository;
-using Eleaning_Web.Response;
-using Eleaning_Web.Services;
 using Eleaning_Web.DTO;
 
 namespace Eleaning_Web.Controllers
@@ -23,81 +21,41 @@ namespace Eleaning_Web.Controllers
         }
         //getall
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<ActionResult<List<AnswerDTO>>> GetAll()
         {
-            try
+            var answer = _answer.GetAll();
+            if (answer == null)
             {
-                var getall = await _answer.GetAll();
-                if (getall == null)
-                {
-                    return NotFound(new { status = "200", message = "Success", data = new List<AnswerResponse>() });
-                }
-                var response = this._mapper.Map<List<AnswerResponse>>(getall);
-                return Ok(new { status = "200", message = "Success", data = response });
+                return new List<AnswerDTO>();
             }
-            catch (Exception e) { return Problem(e.Message); }
-
+            return answer.ToList();
         }
-        //getbyid
-        [HttpGet("{id}")]
-        public async Task<ActionResult> AnswerGetSingle(string id)
-        {
-            try
-            {
-                var find = await _answer.AnswerGetSingle(id);
-                if (find == null)
-                {
-                    return NotFound(new { status = "404", Message = "Id dosesn't exsist" });
-                }
-                var response = this._mapper.Map<AnswerResponse>(find);
-                return Ok(new { status = "200", message = "Success", data = response });
-            }
-            catch (Exception e) { return Problem(e.Message); }
-
-        }
-        //add
         [HttpPost]
-        public async Task<ActionResult> AnswerInsert(AnswerDTO dto)
+        public ActionResult<bool> AddAnswer(AnswerDTO answer)
         {
-            try
-            {
-                return (await _answer.AnswerInsert(dto) == true ?
-                    Ok(new { status = "200", message = "Success" }) :
-                    Conflict(new { status = "409", message = "Id aready exsist" }));
-            }
-            catch (Exception e) { return Problem(e.Message); }
-        }
-        //update
-        [HttpPut("{id}")]
-        public async Task<ActionResult> AnswerUpdate(string id, AnswerDTO dto)
-        {
-            try
-            {
-                //check id equals
-                if (!(id.ToLower().Trim().Equals(dto.Content.ToLower().Trim())))
-                {
-                    return BadRequest(new { status = "400", message = "Id doesn't equals" });
-                }
-                return (await _answer.AnswerUpdate(dto) == true ?
-                    Ok(new { status = "200", message = "Success" }) :
-                    NotFound(new { status = "404", message = "Id doesn't exsist" }));
+            var check = _answer.Insert(answer);
+            _answer.Save();
+            return check;
 
-            }
-            catch (Exception e) { return Problem(e.Message); }
         }
-        //delete
+
+        [HttpPut]
+        public ActionResult<bool> UpdateAnswer(AnswerDTO answer)
+        {
+            var check = _answer.Update(answer);
+            _answer.Save();
+            return check;
+
+        }
+
         [HttpDelete("{id}")]
-        public async Task<ActionResult> AnswerDelete(string id)
+        public ActionResult<bool> DeleteAnswer(string AnswerId)
         {
-            try
-            {
-                return (await _answer.AnswerDelete(id) == true ?
-                    Ok(new { status = "200", message = "Success" }) :
-                    NotFound(new { status = "404", message = "Id doesn't exsist" }));
+            var check = _answer.Delete(AnswerId);
 
-            }
-            catch (Exception e) { return Problem(e.Message); }
+            _answer.Save();
+            return check;
+
         }
-
     }
 }
