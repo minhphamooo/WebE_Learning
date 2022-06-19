@@ -21,6 +21,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IServiceUser, UserManager>();
 builder.Services.AddScoped<IAnswer, AnswerRepository>();
 builder.Services.AddScoped<IClass, ClassRepository>();
+builder.Services.AddScoped<IContentTest, ContentTestRepository>();
+builder.Services.AddScoped<IDocument, DocumentRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

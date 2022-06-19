@@ -2,9 +2,11 @@
 using Eleaning_Web.DTO;
 using Eleaning_Web.Interface;
 using Eleaning_Web.Model;
+
 namespace Eleaning_Web.Repository
 {
-    internal class AnswerRepository : IAnswer
+internal class AnswerRepository : IAnswer
+
     {
         private readonly IMapper admap;
         private readonly DBContext con;

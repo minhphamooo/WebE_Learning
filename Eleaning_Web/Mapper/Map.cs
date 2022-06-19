@@ -9,6 +9,7 @@ namespace Eleaning_Web.Mapper
     {
         public Map()
         {
+
             //Answer
             this.CreateMap<AnswerDTO, Answer>();
             this.CreateMap<Answer, AnswerDTO>();
@@ -18,6 +19,12 @@ namespace Eleaning_Web.Mapper
             //ContentTest
             this.CreateMap<ContentTestDTO, ContentTest>();
             this.CreateMap<ContentTest, ContentTestDTO>();
+            //Document
+            this.CreateMap<DocumentDTO, Document>();
+            this.CreateMap<Document, DocumentDTO>();
+
+
+
         }
     }
 }
