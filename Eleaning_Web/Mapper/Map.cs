@@ -15,6 +15,9 @@ namespace Eleaning_Web.Mapper
             //Class
             this.CreateMap<ClassDTO, Class>();
             this.CreateMap<Class, ClassDTO>();
+            //ContentTest
+            this.CreateMap<ContentTestDTO, ContentTest>();
+            this.CreateMap<ContentTest, ContentTestDTO>();
         }
     }
 }
