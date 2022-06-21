@@ -23,7 +23,10 @@ builder.Services.AddScoped<IAnswer, AnswerRepository>();
 builder.Services.AddScoped<IClass, ClassRepository>();
 builder.Services.AddScoped<IContentTest, ContentTestRepository>();
 builder.Services.AddScoped<IDocument, DocumentRepository>();
-
+builder.Services.AddScoped<IExam, ExamRepository>();
+builder.Services.AddScoped<ILearningResult, LearningResultRepository>();
+builder.Services.AddScoped<ISchedule, ScheduleRepository>();
+builder.Services.AddScoped<ITest, TestRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

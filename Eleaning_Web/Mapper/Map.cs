@@ -9,7 +9,6 @@ namespace Eleaning_Web.Mapper
     {
         public Map()
         {
-
             //Answer
             this.CreateMap<AnswerDTO, Answer>();
             this.CreateMap<Answer, AnswerDTO>();
@@ -22,9 +21,21 @@ namespace Eleaning_Web.Mapper
             //Document
             this.CreateMap<DocumentDTO, Document>();
             this.CreateMap<Document, DocumentDTO>();
-
-
-
+            //Exam
+            this.CreateMap<ExamDTO, Exam>();
+            this.CreateMap<Exam, ExamDTO>();
+            //learningResult
+            this.CreateMap<LearningResultDTO, LearningResult>();
+            this.CreateMap<LearningResult, LearningResultDTO>();
+            //Question
+            this.CreateMap<QuestionDTO, Question>();
+            this.CreateMap<Question, QuestionDTO>();
+            //Schedule
+            this.CreateMap<ScheduleDTO, Schedule>();
+            this.CreateMap<Schedule, ScheduleDTO>();
+            //Test
+            this.CreateMap<TestDTO, Test>();
+            this.CreateMap<Test, TestDTO>();
         }
     }
 }

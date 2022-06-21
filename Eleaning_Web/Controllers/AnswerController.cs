@@ -5,8 +5,6 @@ using Eleaning_Web.Model;
 using AutoMapper;
 using Eleaning_Web.Repository;
 using Eleaning_Web.DTO;
-using Eleaning_Web.Interface;
-
 
 namespace Eleaning_Web.Controllers
 {
