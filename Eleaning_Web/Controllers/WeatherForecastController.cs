@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Eleaning_Web.Controllers
+namespace WEB_ELEANING.Controllers
 {
     [ApiController]
     [Route("[controller]")]

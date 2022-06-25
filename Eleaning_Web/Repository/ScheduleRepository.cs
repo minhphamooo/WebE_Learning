@@ -1,78 +1,84 @@
-﻿using AutoMapper;
-using Eleaning_Web.DTO;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-namespace Eleaning_Web.Repository
+﻿using WEB_ELEANING.Interface;
+using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+
+namespace WEB_ELEANING.Repository
 {
     public class ScheduleRepository : ISchedule
     {
-        private readonly IMapper admap;
-        private readonly DBContext con;
-
-
-        public ScheduleRepository(DBContext context, IMapper mapper)
+        private readonly DBContext _context;
+        public ScheduleRepository(DBContext context)
         {
-            con = context;
-            admap = mapper;
+            _context = context;
         }
-
-
-
-        public bool Delete(int ScheduleId)
+        public int AddSchedule(ScheduleRequest request)
         {
-            var DeleteSchedule = con.Schedules.Find(ScheduleId);
-            if (DeleteSchedule == null)
+            var name = _context.Schedule.FirstOrDefault(u => u.ScheduleName == request.ScheduleName);
+            if (name != null)
             {
-                return false;
+                return 0;
             }
-            con.Remove(DeleteSchedule);
-            return true;
-        }
-
-        public List<ScheduleDTO> GetAll()
-        {
-            var allSchedule = con.Schedules.ToList();
-            return admap.Map<List<ScheduleDTO>>(allSchedule);
-        }
-
-
-
-        public ScheduleDTO GetById(int ScheduleId)
-        {
-            var byid = con.Schedules.Find(ScheduleId);
-            if (byid == null)
+            else
             {
-                return null;
+                var doc = new Schedule
+                {
+                    ScheduleName = request.ScheduleName,
+                    DayLearn = request.DayLearn,
+                    Start = request.Start,
+                    End = request.End
+                };
+                _context.Schedule.Add(doc);
+                _context.SaveChanges();
+                return 1;
             }
-
-            return admap.Map<ScheduleDTO>(byid);
         }
 
-        public bool Insert(ScheduleDTO schedule)
+        public int DeleteSchedule(int id)
         {
-            var insert = con.Schedules.Find(schedule.ScheduleId);
-            if (insert == null)
+            var doc = _context.Schedule.FirstOrDefault(u => u.ScheduleId == id);
+            if (doc == null)
             {
-                con.Schedules.Add(admap.Map<Schedule>(schedule));
-                return true;
+                return 0;
             }
-            return false;
-        }
-
-        public void Save()
-        {
-            con.SaveChanges();
-        }
-
-        public bool Update(ScheduleDTO schedule)
-        {
-            var Update = con.Schedules.Find(schedule.ScheduleId);
-            if (Update != null)
+            else
             {
-                con.Schedules.Update(admap.Map(schedule, Update));
-                return true;
+                _context.Schedule.Remove(doc);
+                _context.SaveChanges();
+                return 1;
             }
-            return false;
         }
+        public int UpdateSchedule(int id, ScheduleRequest request)
+        {
+            var doc = _context.Schedule.FirstOrDefault(u => u.ScheduleId == id);
+            if (doc != null)
+            {
+                doc.ScheduleName = request.ScheduleName;
+                doc.DayLearn = request.DayLearn;
+                doc.Start = request.Start;
+                doc.End = request.End;
+                _context.Schedule.Update(doc);
+                _context.SaveChanges();
+                return 1;
+            }
+            else
+            {
+
+                return 0;
+            }
+        }
+        public int DetailSchedule(int id)
+        {
+            var doc = _context.Schedule.Any(m => m.ScheduleId == id);
+            if (doc == null)
+                return 0;
+            return 1;
+        }
+
+        public List<Schedule> GetAllSchedule()
+        {
+            return _context.Schedule.ToList();
+        }
+
+
     }
 }

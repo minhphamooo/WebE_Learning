@@ -1,78 +1,83 @@
-﻿using AutoMapper;
-using Eleaning_Web.DTO;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-namespace Eleaning_Web.Repository
+﻿using WEB_ELEANING.Interface;
+using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+namespace WEB_ELEANING.Repository
 {
     public class ContentTestRepository : IContentTest
     {
-        private readonly IMapper admap;
-        private readonly DBContext con;
-
-
-        public ContentTestRepository(DBContext context, IMapper mapper)
+        private readonly DBContext _context;
+        public ContentTestRepository(DBContext context)
         {
-            con = context;
-            admap = mapper;
+            _context = context;
         }
-
-
-
-        public bool Delete(int ContentId)
+        public int AddContentTest(ContentTestRequest request)
         {
-            var DeleteContent = con.ContentTests.Find(ContentId);
-            if (DeleteContent == null)
+            var name = _context.ContentTest.FirstOrDefault(u => u.Content == request.Content);
+            if (name != null)
             {
-                return false;
+                return 0;
             }
-            con.Remove(DeleteContent);
-            return true;
-        }
-
-        public List<ContentTestDTO> GetAll()
-        {
-            var allContent = con.ContentTests.ToList();
-            return admap.Map<List<ContentTestDTO>>(allContent);
-        }
-
-
-
-        public ContentTestDTO GetById(int ContentId)
-        {
-            var byid = con.ContentTests.Find(ContentId);
-            if (byid == null)
+            else
             {
-                return null;
+                var doc = new ContentTest
+                {
+                    Content = request.Content,
+                    Result = request.Result,
+                    ExamID = request.ExamID,
+                    SubjectID = request.SubjectID
+                };
+                _context.ContentTest.Add(doc);
+                _context.SaveChanges();
+                return 1;
             }
-
-            return admap.Map<ContentTestDTO>(byid);
         }
 
-        public bool Insert(ContentTestDTO contentTest)
+        public int DeleteContentTest(int id)
         {
-            var insert = con.ContentTests.Find(contentTest.ContentId);
-            if (insert == null)
+            var doc = _context.ContentTest.FirstOrDefault(u => u.ContentId == id);
+            if (doc == null)
             {
-                con.ContentTests.Add(admap.Map<ContentTest>(contentTest));
-                return true;
+                return 0;
             }
-            return false;
-        }
-
-        public void Save()
-        {
-            con.SaveChanges();
-        }
-
-        public bool Update(ContentTestDTO contentTest)
-        {
-            var Update = con.ContentTests.Find(contentTest.ContentId);
-            if (Update != null)
+            else
             {
-                con.ContentTests.Update(admap.Map(contentTest, Update));
-                return true;
+                _context.ContentTest.Remove(doc);
+                _context.SaveChanges();
+                return 1;
             }
-            return false;
         }
+        public int UpdateContentTest(int id, ContentTestRequest request)
+        {
+            var doc = _context.ContentTest.FirstOrDefault(u => u.ContentId == id);
+            if (doc != null)
+            {
+                doc.Content = request.Content;
+                doc.Result = request.Result;
+                doc.ExamID = request.ExamID;
+                doc.SubjectID = request.SubjectID;
+                _context.ContentTest.Update(doc);
+                _context.SaveChanges();
+                return 1;
+            }
+            else
+            {
+
+                return 0;
+            }
+        }
+        public int DetailContentTest(int id)
+        {
+            var doc = _context.ContentTest.Any(m => m.ContentId == id);
+            if (doc == null)
+                return 0;
+            return 1;
+        }
+
+        public List<ContentTest> GetAllContentTest()
+        {
+            return _context.ContentTest.ToList();
+        }
+
+
     }
 }

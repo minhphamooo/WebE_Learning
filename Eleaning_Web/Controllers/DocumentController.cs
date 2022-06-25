@@ -1,61 +1,57 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-using AutoMapper;
-using Eleaning_Web.Repository;
-using Eleaning_Web.DTO;
-
-namespace Eleaning_Web.Controllers
+using WEB_ELEANING.Interface;
+using WEB_ELEANING.Request;
+using WEB_ELEANING.Model;
+namespace WEB_ELEANING.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentController : ControllerBase
     {
         private readonly IDocument _document;
-        private readonly IMapper _mapper;
-        public DocumentController(IDocument document, IMapper mapper)
+        public DocumentController(IDocument doc)
         {
-            _document = document;
-            _mapper = mapper;
+            _document = doc;
         }
-        //getall
-        [HttpGet]
-        public async Task<ActionResult<List<DocumentDTO>>> GetAll()
+        [HttpGet("GetAllDocument")]
+        public ActionResult<IEnumerable<Document>> GetUsers()
         {
-            var model = _document.GetAll();
-            if (model == null)
+            var cls = _document.GetAllDocument();
+            return Ok(cls);
+        }
+        [HttpPost("AddDocument")]
+        public IActionResult Add(DocumentRequest request)
+        {
+            var add = _document.AddDocument(request);
+            if (add == 0)
             {
-                return new List<DocumentDTO>();
+                return BadRequest(new { message = "ten lop da ton tai" });
             }
-            return model.ToList();
+            return Ok(new { message = "tao lop thanh cong" });
         }
-        [HttpPost]
-        public ActionResult<bool> AddDocument(DocumentDTO model)
+        
+        [HttpPut("UpdateDocument")]
+        public IActionResult Update(int id, DocumentRequest rq)
         {
-            var check = _document.Insert(model);
-            _document.Save();
-            return check;
-
+            int login = _document.UpdateDocument(id, rq);
+            if (login == 0)
+            {
+                return BadRequest(new { message = "khong tim thay lop" });
+            }
+            return Ok(new { message = "thay doi thanh cong" });
         }
-
-        [HttpPut]
-        public ActionResult<bool> UpdateDocument(DocumentDTO document)
+        [HttpDelete("DeleteDocument")]
+        public IActionResult Delete(int id)
         {
-            var check = _document.Update(document);
-            _document.Save();
-            return check;
-
+            int login = _document.DeleteDocument(id);
+            if (login == 0)
+            {
+                return BadRequest(new { message = "khong tim thay lop" });
+            }
+            return Ok(new { message = "xoa thanh cong" });
         }
-
-        [HttpDelete("{id}")]
-        public ActionResult<bool> DeleteDocument(int DocumentId)
-        {
-            var check = _document.Delete(DocumentId);
-
-            _document.Save();
-            return check;
-
-        }
+      
+       
     }
 }

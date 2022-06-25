@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace Eleaning_Web.Model
+namespace WEB_ELEANING.Model
 {
     public class LearningResult
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string? LRId { get; set; }
+        public string LRId { get; set; }
         public float ScoreAvg { get; set; }
         public float AttendancePoint { get; set; }
         public float ScoreOralTest { get; set; }
@@ -17,9 +17,7 @@ namespace Eleaning_Web.Model
         public float SumScoreAvg { get; set; }
         public bool ResultOfEvaluation { get; set; }
         public DateTime DateUpdate { get; set; }
-        public int IdSubject { get; set; }
-        public Subject? subject { get; set; }
-        public int IdUser { get; set; }
-        public User? user { get; set; }
+        public int UserId { get; set; }
+        public User user { get; set; }
     }
 }

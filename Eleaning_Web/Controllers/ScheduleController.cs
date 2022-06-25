@@ -1,61 +1,57 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-using AutoMapper;
-using Eleaning_Web.Repository;
-using Eleaning_Web.DTO;
+using WEB_ELEANING.Interface;
+using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
 
-namespace Eleaning_Web.Controllers
+namespace WEB_ELEANING.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ScheduleController : ControllerBase
     {
-        private readonly ISchedule _sche;
-        private readonly IMapper _mapper;
-        public ScheduleController(ISchedule schedule, IMapper mapper)
+        private readonly ISchedule _schedule;
+        public ScheduleController(ISchedule sce)
         {
-            _sche = schedule;
-            _mapper = mapper;
+            _schedule = sce;
         }
-        //getall
-        [HttpGet]
-        public async Task<ActionResult<List<ScheduleDTO>>> GetAll()
+        [HttpGet("GetAllSemester")]
+        public ActionResult<IEnumerable<Schedule>> GetAllSchedule()
         {
-            var schedule = _sche.GetAll();
-            if (schedule == null)
+            var cls = _schedule.GetAllSchedule();
+            return Ok(cls);
+        }
+        [HttpPost("AddSchedule")]
+        public IActionResult AddSchedule(ScheduleRequest request)
+        {
+            var add = _schedule.AddSchedule(request);
+            if (add == 0)
             {
-                return new List<ScheduleDTO>();
+                return BadRequest(new { message = "đã tồn tại" });
             }
-            return schedule.ToList();
+            return Ok(new { message = "tạo thành công" });
         }
-        [HttpPost]
-        public ActionResult<bool> AddSchedule(ScheduleDTO schedule)
+        [HttpPut("UpdateSchedule")]
+        public IActionResult UpdateSchedule(int id, ScheduleRequest request)
         {
-            var check = _sche.Insert(schedule);
-            _sche.Save();
-            return check;
-
+            int rl = _schedule.UpdateSchedule(id, request);
+            if (rl == 0)
+            {
+                return BadRequest(new { message = "Không tìm thấy" });
+            }
+            return Ok(new { message = "Cập nhật thành công" });
         }
-
-        [HttpPut]
-        public ActionResult<bool> UpdateSchedule(ScheduleDTO schedule)
+        [HttpDelete("DeleteSchedule")]
+        public IActionResult DeleteSchedule(int id)
         {
-            var check = _sche.Update(schedule);
-            _sche.Save();
-            return check;
-
+            int login = _schedule.DeleteSchedule(id);
+            if (login == 0)
+            {
+                return BadRequest(new { message = "Không tìm thấy" });
+            }
+            return Ok(new { message = "Đã xóa" });
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<bool> DeleteSchedule(int ScheduleId)
-        {
-            var check = _sche.Delete(ScheduleId);
-
-            _sche.Save();
-            return check;
-
-        }
     }
 }
+

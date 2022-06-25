@@ -1,13 +1,14 @@
-﻿using Eleaning_Web.DTO;
-namespace Eleaning_Web.Interface
+﻿using WEB_ELEANING.Request;
+using WEB_ELEANING.Model;
+
+namespace WEB_ELEANING.Interface
 {
     public interface IDocument
     {
-        List<DocumentDTO> GetAll();
-        DocumentDTO GetById(int DocumentId);
-        bool Insert(DocumentDTO document);
-        bool Update(DocumentDTO document);
-        bool Delete(int DocumentId);
-        void Save();
+        List<Document> GetAllDocument();
+        int AddDocument(DocumentRequest request);
+        int DetailDocument(int id);
+        int DeleteDocument(int id);
+        int UpdateDocument(int id, DocumentRequest request);
     }
 }

@@ -1,13 +1,13 @@
-﻿using Eleaning_Web.DTO;
-namespace Eleaning_Web.Interface
+﻿using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+namespace WEB_ELEANING.Interface
 {
     public interface IClass
     {
-        List<ClassDTO> GetAll();
-        ClassDTO GetById(string ClassId);
-        bool Insert(ClassDTO classDTO);
-        bool Update(ClassDTO classDTO);
-        bool Delete(string ClassId);
-        void Save();
+        List<Class> GetAllClass();
+        int AddClass(ClassRequest request);
+        int DetailClass(int id);
+        int DeleteClass(int id);
+        int UpdateClass(int id, ClassRequest request);
     }
 }

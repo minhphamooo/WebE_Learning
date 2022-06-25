@@ -1,13 +1,14 @@
-﻿using Eleaning_Web.DTO;
-namespace Eleaning_Web.Interface
+﻿using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+
+namespace WEB_ELEANING.Interface
 {
     public interface ISchedule
     {
-        List<ScheduleDTO> GetAll();
-        ScheduleDTO GetById(int ScheduleId);
-        bool Insert(ScheduleDTO schedule);
-        bool Update(ScheduleDTO schedule);
-        bool Delete(int ScheduleId);
-        void Save();
+        List<Schedule> GetAllSchedule();
+        int AddSchedule(ScheduleRequest request);
+        int DetailSchedule(int id);
+        int DeleteSchedule(int id);
+        int UpdateSchedule(int id, ScheduleRequest request);
     }
 }

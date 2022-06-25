@@ -1,78 +1,88 @@
-﻿using AutoMapper;
-using Eleaning_Web.DTO;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-namespace Eleaning_Web.Repository
+﻿using WEB_ELEANING.Interface;
+using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+
+namespace WEB_ELEANING.Repository
 {
     public class ClassRepository : IClass
     {
-        private readonly IMapper admap;
-        private readonly DBContext con;
-
-
-        public ClassRepository(DBContext context, IMapper mapper)
+        private readonly DBContext _context;
+        public ClassRepository(DBContext context)
         {
-            con = context;
-            admap = mapper;
+            _context = context;
         }
 
-
-
-        public bool Delete(string ClassId)
+        public int AddClass(ClassRequest request)
         {
-            var DeleteClass = con.Answers.Find(ClassId);
-            if (DeleteClass == null)
+            var name = _context.Class.FirstOrDefault(u => u.NameClass == request.Name);
+            if (name != null)
             {
-                return false;
+                return 0;
             }
-            con.Remove(DeleteClass);
-            return true;
-        }
-
-        public List<ClassDTO> GetAll()
-        {
-            var allClass = con.Classes.ToList();
-            return admap.Map<List<ClassDTO>>(allClass);
-        }
-
-
-
-        public ClassDTO GetById(string ClassId)
-        {
-            var byid = con.Classes.Find(ClassId);
-            if (byid == null)
+            else
             {
-                return null;
+                var cls = new Class
+                {
+                    NameClass = request.Name,
+                    Amount = request.Amount,
+                    Link = request.link,
+                    Status = request.status
+                };
+                _context.Class.Add(cls);
+                _context.SaveChanges();
+                return 1;
             }
-
-            return admap.Map<ClassDTO>(byid);
         }
 
-        public bool Insert(ClassDTO classDTO)
+        public int DeleteClass(int id)
         {
-            var insert = con.Classes.Find(classDTO.ClassId);
-            if (insert == null)
+            var cls = _context.Class.FirstOrDefault(u => u.ClassId == id);
+            if (cls == null)
             {
-                con.Classes.Add(admap.Map<Class>(classDTO));
-                return true;
+                return 0;
             }
-            return false;
-        }
-
-        public void Save()
-        {
-            con.SaveChanges();
-        }
-
-        public bool Update(ClassDTO classDTO)
-        {
-            var Update = con.Classes.Find(classDTO.ClassId);
-            if (Update != null)
+            else
             {
-                con.Classes.Update(admap.Map(classDTO, Update));
-                return true;
+                _context.Class.Remove(cls);
+                _context.SaveChanges();
+                return 1;
             }
-            return false;
         }
+
+        public int DetailClass(int id)
+        {
+            var cls = _context.Class.Any(m => m.ClassId == id);
+            if (cls == null)
+                return 0;
+            return 1;
+        }
+
+        public List<Class> GetAllClass()
+        {
+            return _context.Class.ToList();
+        }
+
+
+
+        public int UpdateClass(int id, ClassRequest request)
+        {
+            var cls = _context.Class.FirstOrDefault(u => u.ClassId == id);
+            if (cls != null)
+            {
+                cls.NameClass = request.Name;
+                cls.Amount = request.Amount;
+                cls.Link = request.link;
+                cls.Status = request.status;
+                _context.Class.Update(cls);
+                _context.SaveChanges();
+                return 1;
+            }
+            else
+            {
+
+                return 0;
+            }
+        }
+
     }
 }

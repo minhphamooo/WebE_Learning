@@ -1,78 +1,82 @@
-﻿using AutoMapper;
-using Eleaning_Web.DTO;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-namespace Eleaning_Web.Repository
+﻿using WEB_ELEANING.Interface;
+using WEB_ELEANING.Model;
+using WEB_ELEANING.Request;
+
+namespace WEB_ELEANING.Repository
 {
     public class DocumentRepository : IDocument
     {
-        private readonly IMapper admap;
-        private readonly DBContext con;
-
-
-        public DocumentRepository(DBContext context, IMapper mapper)
+        private readonly DBContext _context;
+        public DocumentRepository(DBContext context)
         {
-            con = context;
-            admap = mapper;
+            _context = context;
         }
-
-
-
-        public bool Delete(int DocumentId)
+        public int AddDocument(DocumentRequest request)
         {
-            var DeleteDocument = con.ContentTests.Find(DocumentId);
-            if (DeleteDocument == null)
+            var name = _context.Document.FirstOrDefault(u => u.NameDocument == request.DocumentName);
+            if (name != null)
             {
-                return false;
+                return 0;
             }
-            con.Remove(DeleteDocument);
-            return true;
-        }
-
-        public List<DocumentDTO> GetAll()
-        {
-            var allDocument = con.Documents.ToList();
-            return admap.Map<List<DocumentDTO>>(allDocument);
-        }
-
-
-
-        public DocumentDTO GetById(int DocumentId)
-        {
-            var byid = con.Documents.Find(DocumentId);
-            if (byid == null)
+            else
             {
-                return null;
+                var doc = new Document
+                {
+                    NameDocument = request.DocumentName,
+                    Link = request.link,
+                    SubjectId = request.SubjectId
+                };
+                _context.Document.Add(doc);
+                _context.SaveChanges();
+                return 1;
             }
-
-            return admap.Map<DocumentDTO>(byid);
         }
 
-        public bool Insert(DocumentDTO document)
+        public int DeleteDocument(int id)
         {
-            var insert = con.Documents.Find(document.DocumentId);
-            if (insert == null)
+            var doc = _context.Document.FirstOrDefault(u => u.DocumentId == id);
+            if (doc == null)
             {
-                con.Documents.Add(admap.Map<Document>(document));
-                return true;
+                return 0;
             }
-            return false;
-        }
-
-        public void Save()
-        {
-            con.SaveChanges();
-        }
-
-        public bool Update(DocumentDTO document)
-        {
-            var Update = con.Documents.Find(document.DocumentId);
-            if (Update != null)
+            else
             {
-                con.Documents.Update(admap.Map(document, Update));
-                return true;
+                _context.Document.Remove(doc);
+                _context.SaveChanges();
+                return 1;
             }
-            return false;
         }
+        public int UpdateDocument(int id, DocumentRequest request)
+        {
+            var doc = _context.Document.FirstOrDefault(u => u.DocumentId == id);
+            if (doc != null)
+            {
+                doc.NameDocument = request.DocumentName;
+                doc.Link = request.link;
+                doc.SubjectId = request.SubjectId;
+                _context.Document.Update(doc);
+                _context.SaveChanges();
+                return 1;
+            }
+            else
+            {
+
+                return 0;
+            }
+        }
+        public int DetailDocument(int id)
+        {
+            var doc = _context.Document.Any(m => m.DocumentId == id);
+            if (doc == null)
+                return 0;
+            return 1;
+        }
+
+        public List<Document> GetAllDocument()
+        {
+            return _context.Document.ToList();
+        }
+
+       
     }
 }

@@ -1,4 +1,4 @@
-namespace Eleaning_Web
+namespace WEB_ELEANING
 {
     public class WeatherForecast
     {

@@ -1,61 +1,58 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Eleaning_Web.Interface;
-using Eleaning_Web.Model;
-using AutoMapper;
-using Eleaning_Web.Repository;
-using Eleaning_Web.DTO;
+using WEB_ELEANING.Interface;
+using WEB_ELEANING.Request;
+using WEB_ELEANING.Model;
 
-namespace Eleaning_Web.Controllers
+namespace WEB_ELEANING.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ContentTestController : ControllerBase
     {
-        private readonly IContentTest _contentTest;
-        private readonly IMapper _mapper;
-        public ContentTestController(IContentTest contentTest, IMapper mapper)
+        private readonly IContentTest _content;
+        public ContentTestController(IContentTest doc)
         {
-            _contentTest = contentTest;
-            _mapper = mapper;
+            _content = doc;
         }
-        //getall
-        [HttpGet]
-        public async Task<ActionResult<List<ContentTestDTO>>> GetAll()
+        [HttpGet("GetAllContentTest")]
+        public ActionResult<IEnumerable<ContentTest>> GetAllContentTest()
         {
-            var model = _contentTest.GetAll();
-            if (model == null)
+            var ct = _content.GetAllContentTest();
+            return Ok(ct);
+        }
+        [HttpPost("AddContentTest")]
+        public IActionResult Add(ContentTestRequest request)
+        {
+            var add = _content.AddContentTest(request);
+            if (add == 0)
             {
-                return new List<ContentTestDTO>();
+                return BadRequest(new { message = "tên đã tồn tại" });
             }
-            return model.ToList();
+            return Ok(new { message = "tạo thành công" });
         }
-        [HttpPost]
-        public ActionResult<bool> AddContentTest(ContentTestDTO model)
+
+        [HttpPut("UpdateContentTest")]
+        public IActionResult Update(int id, ContentTestRequest rq)
         {
-            var check = _contentTest.Insert(model);
-            _contentTest.Save();
-            return check;
-
+            int login = _content.UpdateContentTest(id, rq);
+            if (login == 0)
+            {
+                return BadRequest(new { message = "khong tim thay lop" });
+            }
+            return Ok(new { message = "thay doi thanh cong" });
         }
-
-        [HttpPut]
-        public ActionResult<bool> UpdateContentTest(ContentTestDTO contentTest)
+        [HttpDelete("DeleteContentTest")]
+        public IActionResult Delete(int id)
         {
-            var check = _contentTest.Update(contentTest);
-            _contentTest.Save();
-            return check;
-
+            int login = _content.DeleteContentTest(id);
+            if (login == 0)
+            {
+                return BadRequest(new { message = "khong tim thay lop" });
+            }
+            return Ok(new { message = "xoa thanh cong" });
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<bool> DeleteContentTest(int ContentId)
-        {
-            var check = _contentTest.Delete(ContentId);
 
-            _contentTest.Save();
-            return check;
-
-        }
     }
 }
