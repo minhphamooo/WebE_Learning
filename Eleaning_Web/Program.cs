@@ -18,6 +18,8 @@ builder.Services.AddScoped<IRole, RoleRepository>();
 builder.Services.AddScoped<ITypeExam, TypeExamRepository>();
 builder.Services.AddScoped<ISemester, SemesterRepository>();
 builder.Services.AddScoped<ISchedule, ScheduleRepository>();
+builder.Services.AddScoped<IQuestion, QuestionRepository>();
+builder.Services.AddScoped<ILearningResult, LearningResultRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
