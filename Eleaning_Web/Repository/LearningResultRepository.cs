@@ -1,88 +1,78 @@
-﻿using WEB_ELEANING.Interface;
-using WEB_ELEANING.Model;
-using WEB_ELEANING.Request;
-
-namespace WEB_ELEANING.Repository
+﻿using AutoMapper;
+using Eleaning_Web.DTO;
+using Eleaning_Web.Interface;
+using Eleaning_Web.Model;
+namespace Eleaning_Web.Repository
 {
     public class LearningResultRepository : ILearningResult
     {
-        private readonly DBContext _context;
-        public LearningResultRepository(DBContext context)
-        {
-            _context = context;
-        }
-        public int AddLearningResult(LearningResultRequest request)
-        {
-            var name = _context.LearningResult.FirstOrDefault(u => u.ScoreAvg == request.ScoreAvg);
-            if (name != null)
-            {
-                return 0;
-            }
-            else
-            {
-                var doc = new LearningResult
-                {
-                    ScoreAvg = request.ScoreAvg,
-                    AttendancePoint=request.AttendancePoint,
-                    ScoreOralTest=request.ScoreOralTest,
-                    Score=request.Score,
-                    Score15Minunes=request.Score15Minunes,
-                    ScoreCoefficient2=request.ScoreCoefficient2,
-                    ScoreCoefficient3=request.ScoreCoefficient3,
-                    SumScoreAvg=request.SumScoreAvg,
-                    ResultOfEvaluation=request.ResultOfEvaluation,
-                    DateUpdate=request.DateUpdate,
-                    UserId=request.UserId,
-                };
-                _context.LearningResult.Add(doc);
-                _context.SaveChanges();
-                return 1;
-            }
-        }
+        private readonly IMapper admap;
+        private readonly DBContext con;
 
-        public int DeleteLearningResult(string id)
-        {
-            var doc = _context.LearningResult.FirstOrDefault(u => u.LRId == id);
-            if (doc == null)
-            {
-                return 0;
-            }
-            else
-            {
-                _context.LearningResult.Remove(doc);
-                _context.SaveChanges();
-                return 1;
-            }
-        }
-        public int UpdateLearningResult(string id, LearningResultRequest request)
-        {
-            var doc = _context.LearningResult.FirstOrDefault(u => u.LRId == id);
-            if (doc != null)
-            {
 
-                _context.LearningResult.Update(doc);
-                _context.SaveChanges();
-                return 1;
-            }
-            else
-            {
-
-                return 0;
-            }
-        }
-        public int DetailLearningResult(string id)
+        public LearningResultRepository(DBContext context, IMapper mapper)
         {
-            var doc = _context.LearningResult.Any(m => m.LRId == id);
-            if (doc == null)
-                return 0;
-            return 1;
-        }
-
-        public List<LearningResult> GetLearningResult()
-        {
-            return _context.LearningResult.ToList();
+            con = context;
+            admap = mapper;
         }
 
 
+
+        public bool Delete(string LRId)
+        {
+            var DeleteLearning = con.LearningResults.Find(LRId);
+            if (DeleteLearning == null)
+            {
+                return false;
+            }
+            con.Remove(DeleteLearning);
+            return true;
+        }
+
+        public List<LearningResultDTO> GetAll()
+        {
+            var allLearning = con.LearningResults.ToList();
+            return admap.Map<List<LearningResultDTO>>(allLearning);
+        }
+
+
+
+        public LearningResultDTO GetById(string LRId)
+        {
+            var byid = con.LearningResults.Find(LRId);
+            if (byid == null)
+            {
+                return null;
+            }
+
+            return admap.Map<LearningResultDTO>(byid);
+        }
+
+        public bool Insert(LearningResultDTO learningResult)
+        {
+            var insert = con.LearningResults.Find(learningResult.LRId);
+            if (insert == null)
+            {
+                con.LearningResults.Add(admap.Map<LearningResult>(learningResult));
+                return true;
+            }
+            return false;
+        }
+
+        public void Save()
+        {
+            con.SaveChanges();
+        }
+
+        public bool Update(LearningResultDTO learningResult)
+        {
+            var Update = con.LearningResults.Find(learningResult.LRId);
+            if (Update != null)
+            {
+                con.LearningResults.Update(admap.Map(learningResult, Update));
+                return true;
+            }
+            return false;
+        }
     }
 }

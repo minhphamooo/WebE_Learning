@@ -4,13 +4,13 @@ using Eleaning_Web.Interface;
 using Eleaning_Web.Model;
 namespace Eleaning_Web.Repository
 {
-    public class RoleRepository
+    public class ExamRepository : IExam
     {
         private readonly IMapper admap;
         private readonly DBContext con;
 
 
-        public RoleRepository(DBContext context, IMapper mapper)
+        public ExamRepository(DBContext context, IMapper mapper)
         {
             con = context;
             admap = mapper;
@@ -18,42 +18,42 @@ namespace Eleaning_Web.Repository
 
 
 
-        public bool Delete(int RoleId)
+        public bool Delete(int ExamId)
         {
-            var DeleteRole = con.Roles.Find(RoleId);
-            if (DeleteRole == null)
+            var DeleteExam = con.Exams.Find(ExamId);
+            if (DeleteExam == null)
             {
                 return false;
             }
-            con.Remove(DeleteRole);
+            con.Remove(DeleteExam);
             return true;
         }
 
-        public List<RoleDTO> GetAll()
+        public List<ExamDTO> GetAll()
         {
-            var allRole = con.Roles.ToList();
-            return admap.Map<List<RoleDTO>>(allRole);
+            var allExam = con.Exams.ToList();
+            return admap.Map<List<ExamDTO>>(allExam);
         }
 
 
 
-        public RoleDTO GetById(int RoleId)
+        public ExamDTO GetById(int ExamId)
         {
-            var byid = con.Roles.Find(RoleId);
+            var byid = con.Exams.Find(ExamId);
             if (byid == null)
             {
                 return null;
             }
 
-            return admap.Map<RoleDTO>(byid);
+            return admap.Map<ExamDTO>(byid);
         }
 
-        public bool Insert(RoleDTO role)
+        public bool Insert(ExamDTO exam)
         {
-            var insert = con.Roles.Find(role.RoleId);
+            var insert = con.Exams.Find(exam.ExamId);
             if (insert == null)
             {
-                con.Roles.Add(admap.Map<Role>(role));
+                con.Exams.Add(admap.Map<Exam>(exam));
                 return true;
             }
             return false;
@@ -64,12 +64,12 @@ namespace Eleaning_Web.Repository
             con.SaveChanges();
         }
 
-        public bool Update(RoleDTO role)
+        public bool Update(ExamDTO exam)
         {
-            var Update = con.Roles.Find(role.RoleId);
+            var Update = con.Exams.Find(exam.ExamId);
             if (Update != null)
             {
-                con.Roles.Update(admap.Map(role, Update));
+                con.Exams.Update(admap.Map(exam, Update));
                 return true;
             }
             return false;

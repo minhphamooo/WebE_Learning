@@ -1,13 +1,11 @@
-﻿using WEB_ELEANING.Interface;
-using WEB_ELEANING.Model;
-using WEB_ELEANING.Request;
-
-namespace WEB_ELEANING.Repository
+﻿using Eleaning_Web.Model;
+using Eleaning_Web.Interface;
+namespace Eleaning_Web.Services
 {
-    public class UserRepository : IUser
+    public class UserManager : IUser
     {
         private readonly DBContext _context;
-        public UserRepository(DBContext context)
+        public UserManager(DBContext context)
         {
             _context = context;
         }
@@ -36,7 +34,7 @@ namespace WEB_ELEANING.Repository
             }
             else
             {
-                user.Password = Encode.Encrypt(newpass);
+                user.Password = HashPass.Encrypt(newpass);
                 _context.Users.Update(user);
                 _context.SaveChanges();
                 return 1;
@@ -50,7 +48,7 @@ namespace WEB_ELEANING.Repository
 
         public int Login(string email, string pass)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == Encode.Encrypt(pass));
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == HashPass.Encrypt(pass));
             if (user == null)
             {
                 return 0;
@@ -75,7 +73,7 @@ namespace WEB_ELEANING.Repository
                 {
                     Email = request.Email,
                     PhoneNumber = request.phone,
-                    Password = Encode.Encrypt(request.Password),
+                    Password = HashPass.Encrypt(request.Password),
                     RoleId = request.RoleId,
                 };
                 _context.Users.Add(user);
@@ -91,7 +89,7 @@ namespace WEB_ELEANING.Repository
             {
                 user.Email = request.Email;
                 user.PhoneNumber = (request.phone).ToString();
-                user.Password = Encode.Encrypt(request.Password);
+                user.Password = HashPass.Encrypt(request.Password);
                 user.RoleId = request.RoleId;
                 _context.Users.Update(user);
                 _context.SaveChanges();
@@ -102,5 +100,7 @@ namespace WEB_ELEANING.Repository
                 return 0;
             }
         }
+
+
     }
 }

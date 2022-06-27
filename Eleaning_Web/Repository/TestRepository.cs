@@ -4,13 +4,13 @@ using Eleaning_Web.Interface;
 using Eleaning_Web.Model;
 namespace Eleaning_Web.Repository
 {
-    public class RoleRepository
+    public class TestRepository : ITest
     {
         private readonly IMapper admap;
         private readonly DBContext con;
 
 
-        public RoleRepository(DBContext context, IMapper mapper)
+        public TestRepository(DBContext context, IMapper mapper)
         {
             con = context;
             admap = mapper;
@@ -18,42 +18,42 @@ namespace Eleaning_Web.Repository
 
 
 
-        public bool Delete(int RoleId)
+        public bool Delete(int TestId)
         {
-            var DeleteRole = con.Roles.Find(RoleId);
-            if (DeleteRole == null)
+            var DeleteSchedule = con.Tests.Find(TestId);
+            if (DeleteSchedule == null)
             {
                 return false;
             }
-            con.Remove(DeleteRole);
+            con.Remove(DeleteSchedule);
             return true;
         }
 
-        public List<RoleDTO> GetAll()
+        public List<TestDTO> GetAll()
         {
-            var allRole = con.Roles.ToList();
-            return admap.Map<List<RoleDTO>>(allRole);
+            var allTest = con.Tests.ToList();
+            return admap.Map<List<TestDTO>>(allTest);
         }
 
 
 
-        public RoleDTO GetById(int RoleId)
+        public TestDTO GetById(int TestId)
         {
-            var byid = con.Roles.Find(RoleId);
+            var byid = con.Tests.Find(TestId);
             if (byid == null)
             {
                 return null;
             }
 
-            return admap.Map<RoleDTO>(byid);
+            return admap.Map<TestDTO>(byid);
         }
 
-        public bool Insert(RoleDTO role)
+        public bool Insert(TestDTO test)
         {
-            var insert = con.Roles.Find(role.RoleId);
+            var insert = con.Tests.Find(test.TestId);
             if (insert == null)
             {
-                con.Roles.Add(admap.Map<Role>(role));
+                con.Tests.Add(admap.Map<Test>(test));
                 return true;
             }
             return false;
@@ -64,12 +64,12 @@ namespace Eleaning_Web.Repository
             con.SaveChanges();
         }
 
-        public bool Update(RoleDTO role)
+        public bool Update(TestDTO test)
         {
-            var Update = con.Roles.Find(role.RoleId);
+            var Update = con.Tests.Find(test.TestId);
             if (Update != null)
             {
-                con.Roles.Update(admap.Map(role, Update));
+                con.Tests.Update(admap.Map(test, Update));
                 return true;
             }
             return false;

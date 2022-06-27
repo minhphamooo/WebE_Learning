@@ -1,91 +1,78 @@
-﻿using WEB_ELEANING.Interface;
-using WEB_ELEANING.Model;
-using WEB_ELEANING.Request;
-
-namespace WEB_ELEANING.Repository
+﻿using AutoMapper;
+using Eleaning_Web.DTO;
+using Eleaning_Web.Interface;
+using Eleaning_Web.Model;
+namespace Eleaning_Web.Repository
 {
     public class QuestionRepository : IQuestion
     {
-        private readonly DBContext _context;
-        public QuestionRepository(DBContext context)
-        {
-            _context = context;
-        }
-        public int AddQuestion(QuestionRequest request)
-        {
-            var name = _context.Question.FirstOrDefault(u => u.QuestionName == request.QuestionName);
-            if (name != null)
-            {
-                return 0;
-            }
-            else
-            {
-                var sub = new Question
-                {
-                    QuestionName = request.QuestionName,
-                    AnswerA = request.AnswerA,
-                    AnswerB = request.AnswerB,
-                    AnswerC = request.AnswerC,
-                    AnswerD = request.AnswerD,
-                    AnswerCorrect = request.AnswerCorrect,
-                    ContentId = request.ContentId,
+        private readonly IMapper admap;
+        private readonly DBContext con;
 
-                };
-                _context.Question.Add(sub);
-                _context.SaveChanges();
-                return 1;
-            }
+
+        public QuestionRepository(DBContext context, IMapper mapper)
+        {
+            con = context;
+            admap = mapper;
         }
 
-        public int DeleteQuestion(string id)
+
+
+        public bool Delete(string QuestionId)
         {
-            var cls = _context.Question.FirstOrDefault(u => u.QuestionId == id);
-            if (cls == null)
+            var DeleteQuestion = con.Questions.Find(QuestionId);
+            if (DeleteQuestion == null)
             {
-                return 0;
+                return false;
             }
-            else
-            {
-                _context.Question.Remove(cls);
-                _context.SaveChanges();
-                return 1;
-            }
+            con.Remove(DeleteQuestion);
+            return true;
         }
 
-        public int DetailQuestion(string id)
+        public List<QuestionDTO> GetAll()
         {
-            var cls = _context.Question.Any(m => m.QuestionId == id);
-            if (cls == null)
-                return 0;
-            return 1;
+            var allQuestionId = con.Questions.ToList();
+            return admap.Map<List<QuestionDTO>>(allQuestionId);
         }
 
-        public List<Question> GetAllQuestion()
+
+
+        public QuestionDTO GetById(string QuestionId)
         {
-            return _context.Question.ToList();
+            var byid = con.Questions.Find(QuestionId);
+            if (byid == null)
+            {
+                return null;
+            }
+
+            return admap.Map<QuestionDTO>(byid);
         }
 
-        public int UpdateQuestion(string id, QuestionRequest request)
+        public bool Insert(QuestionDTO question)
         {
-            var sub = _context.Question.FirstOrDefault(u => u.QuestionId == id);
-            if (sub != null)
+            var insert = con.Questions.Find(question.QuestionId);
+            if (insert == null)
             {
-                sub.QuestionName = request.QuestionName;
-                sub.AnswerA = request.AnswerA;
-                sub.AnswerB = request.AnswerB;
-                sub.AnswerC = request.AnswerC;
-                sub.AnswerD = request.AnswerD;
-                sub.AnswerCorrect = request.AnswerCorrect;
-                sub.ContentId = request.ContentId;
-                _context.Question.Update(sub);
-                _context.SaveChanges();
-                return 1;
+                con.Exams.Add(admap.Map<Exam>(question));
+                return true;
             }
-            else
-            {
+            return false;
+        }
 
-                return 0;
+        public void Save()
+        {
+            con.SaveChanges();
+        }
+
+        public bool Update(QuestionDTO question)
+        {
+            var Update = con.Questions.Find(question.QuestionId);
+            if (Update != null)
+            {
+                con.Questions.Update(admap.Map(question, Update));
+                return true;
             }
+            return false;
         }
     }
 }

@@ -1,82 +1,78 @@
-﻿using WEB_ELEANING.Interface;
-using WEB_ELEANING.Model;
-using WEB_ELEANING.Request;
-
-namespace WEB_ELEANING.Repository
+﻿using AutoMapper;
+using Eleaning_Web.DTO;
+using Eleaning_Web.Interface;
+using Eleaning_Web.Model;
+namespace Eleaning_Web.Repository
 {
     public class DocumentRepository : IDocument
     {
-        private readonly DBContext _context;
-        public DocumentRepository(DBContext context)
+        private readonly IMapper admap;
+        private readonly DBContext con;
+
+
+        public DocumentRepository(DBContext context, IMapper mapper)
         {
-            _context = context;
-        }
-        public int AddDocument(DocumentRequest request)
-        {
-            var name = _context.Document.FirstOrDefault(u => u.NameDocument == request.DocumentName);
-            if (name != null)
-            {
-                return 0;
-            }
-            else
-            {
-                var doc = new Document
-                {
-                    NameDocument = request.DocumentName,
-                    Link = request.link,
-                    SubjectId = request.SubjectId
-                };
-                _context.Document.Add(doc);
-                _context.SaveChanges();
-                return 1;
-            }
+            con = context;
+            admap = mapper;
         }
 
-        public int DeleteDocument(int id)
-        {
-            var doc = _context.Document.FirstOrDefault(u => u.DocumentId == id);
-            if (doc == null)
-            {
-                return 0;
-            }
-            else
-            {
-                _context.Document.Remove(doc);
-                _context.SaveChanges();
-                return 1;
-            }
-        }
-        public int UpdateDocument(int id, DocumentRequest request)
-        {
-            var doc = _context.Document.FirstOrDefault(u => u.DocumentId == id);
-            if (doc != null)
-            {
-                doc.NameDocument = request.DocumentName;
-                doc.Link = request.link;
-                doc.SubjectId = request.SubjectId;
-                _context.Document.Update(doc);
-                _context.SaveChanges();
-                return 1;
-            }
-            else
-            {
 
-                return 0;
-            }
-        }
-        public int DetailDocument(int id)
+
+        public bool Delete(int DocumentId)
         {
-            var doc = _context.Document.Any(m => m.DocumentId == id);
-            if (doc == null)
-                return 0;
-            return 1;
+            var DeleteDocument = con.Documents.Find(DocumentId);
+            if (DeleteDocument == null)
+            {
+                return false;
+            }
+            con.Remove(DeleteDocument);
+            return true;
         }
 
-        public List<Document> GetAllDocument()
+        public List<DocumentDTO> GetAll()
         {
-            return _context.Document.ToList();
+            var allDocument = con.Documents.ToList();
+            return admap.Map<List<DocumentDTO>>(allDocument);
         }
 
-       
+
+
+        public DocumentDTO GetById(int DocumentId)
+        {
+            var byid = con.Documents.Find(DocumentId);
+            if (byid == null)
+            {
+                return null;
+            }
+
+            return admap.Map<DocumentDTO>(byid);
+        }
+
+        public bool Insert(DocumentDTO document)
+        {
+            var insert = con.Documents.Find(document.DocumentId);
+            if (insert == null)
+            {
+                con.Documents.Add(admap.Map<Document>(document));
+                return true;
+            }
+            return false;
+        }
+
+        public void Save()
+        {
+            con.SaveChanges();
+        }
+
+        public bool Update(DocumentDTO document)
+        {
+            var Update = con.Documents.Find(document.DocumentId);
+            if (Update != null)
+            {
+                con.Documents.Update(admap.Map(document, Update));
+                return true;
+            }
+            return false;
+        }
     }
 }
